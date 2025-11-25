@@ -1,36 +1,37 @@
-# This workflow is triggered on pull request to the main branch.
-# It builds the React application and deploys a preview to Firebase Hosting.
+# This workflow is triggered when code is pushed directly to the main branch.
+# It handles the npm install, build, and deploy steps.
 
-name: Deploy to Firebase Hosting on PR
+name: Deploy to Firebase Hosting
 
 on:
-  pull_request:
+  push:
     branches:
-      - main
+      - main  # 當程式碼推送到 main 分支時觸發自動部署
 
 jobs:
-  build_and_preview:
+  build_and_deploy:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      
+
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20'
 
-      - name: Install dependencies and build
-        run: |
-          npm install
-          npm run build
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build React App
+        run: npm run build
       
-      # 將建構好的檔案 (dist 資料夾) 部署到 Firebase Hosting
-      - uses: FirebaseExtended/action-hosting-deploy@v0
+      # 使用 Firebase Actions 進行部署
+      - name: Deploy to Firebase
+        uses: FirebaseExtended/action-hosting-deploy@v0
         with:
-          repoToken: '${{ secrets.GITHUB_TOKEN }}'
-          # 重要：請將後面的 'JAPAN_TRIP_PLANNER_XXXX' 替換為您的專案 ID 的大寫格式，並用底線取代 '-'
-          firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_japan-trip-planner-2025 }}' 
-          # 重要：請將這裡替換為您的 Firebase 專案 ID
-          projectId: japan-trip-planner-2025
-          channelId: live
-          target: hosting
+          # Firebase 專案 ID
+          projectId: japan-trip-planner-2025 
+          # 部署目標，這裡使用的是 Kinsta 網站的預設名稱
+          target: japan-trip-planner-2025 
+          # 讓 Firebase 自己從 secrets 裡讀取服務帳號，無需複雜配置
+          firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
