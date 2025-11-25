@@ -1,0 +1,36 @@
+# This workflow is triggered on pull request to the main branch.
+# It builds the React application and deploys a preview to Firebase Hosting.
+
+name: Deploy to Firebase Hosting on PR
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build_and_preview:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies and build
+        run: |
+          npm install
+          npm run build
+      
+      # 將建構好的檔案 (dist 資料夾) 部署到 Firebase Hosting
+      - uses: FirebaseExtended/action-hosting-deploy@v0
+        with:
+          repoToken: '${{ secrets.GITHUB_TOKEN }}'
+          # 重要：請將後面的 'JAPAN_TRIP_PLANNER_XXXX' 替換為您的專案 ID 的大寫格式，並用底線取代 '-'
+          firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_japan-trip-planner-2025 }}' 
+          # 重要：請將這裡替換為您的 Firebase 專案 ID
+          projectId: japan-trip-planner-2025
+          channelId: live
+          target: hosting
