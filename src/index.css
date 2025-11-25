@@ -1,0 +1,13 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* 確保 App 佔滿整個視口高度，以達到手機 App 的體驗 */
+body {
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+}
+#root {
+  min-height: 100vh;
+}
